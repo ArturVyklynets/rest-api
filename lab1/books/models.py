@@ -1,24 +1,25 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class Book:
-  id: int 
-  title: str
-  author: str
-  year: int
-  genre: str = ""
-  pages: int = 0
+    id: int
+    title: str
+    author: str
+    year: int
+    genre: str = ""
+    pages: int = 0
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "author": self.author,
+            "genre": self.genre,
+            "pages": self.pages,
+            "year": self.year,
+        }
 
-  def to_dict(self):
-    return {
-      "id": self.id,
-      "title": self.title,
-      "author": self.author,
-      "genre": self.genre,
-      "pages": self.pages,
-      "year": self.year,
-    } 
 
 all_books = [
     Book(id=1, title="Тигролови", author="Іван Багряний", genre="Роман", year=1944),
