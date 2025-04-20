@@ -31,10 +31,10 @@ def get_all_books():
     else:
         pagination["previous_url"] = None
 
-    books_schema = BookSchema(many=True)
+    books_dict = [book.to_dict() for book in books]
 
     return jsonify({
-        "books": books_schema.dump(books),
+        "books": books_dict,
         "pagination": pagination
     })
 
