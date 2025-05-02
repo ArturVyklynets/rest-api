@@ -1,11 +1,13 @@
-from flask_restful import Resource
 from flasgger import swag_from
 from flask import request
+from flask_restful import Resource
+
 from books.models import db, Book
 from books.schema import BookSchema
 
 book_schema = BookSchema()
 book_list_schema = BookSchema(many=True)
+
 
 class BookListResource(Resource):
     @swag_from({
@@ -81,6 +83,7 @@ class BookListResource(Resource):
         db.session.add(new_book)
         db.session.commit()
         return new_book.to_dict(), 201
+
 
 class BookResource(Resource):
     @swag_from({

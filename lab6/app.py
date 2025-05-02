@@ -1,9 +1,9 @@
 import os
 
 from dotenv import load_dotenv
+from flasgger import Swagger
 from flask import Flask, jsonify
 from flask_restful import Api
-from flasgger import Swagger
 
 from books.models import db
 from books.routes import BookListResource, BookResource
@@ -38,9 +38,9 @@ def index():
 def page_not_found(error):
     return jsonify({"message": "Resource not found"}), 404
 
+
 api.add_resource(BookListResource, '/books')
 api.add_resource(BookResource, '/book/<int:book_id>')
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5002, debug=False)
