@@ -1,5 +1,6 @@
 import os
 
+from dotenv import load_dotenv
 from fastapi import APIRouter, HTTPException, Query
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
@@ -14,6 +15,7 @@ book_repo = BookRepository()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/token")
 
+load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
