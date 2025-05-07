@@ -4,6 +4,7 @@ import redis.asyncio as redis
 from auth.auth_router import auth_router
 from books.router import books_router
 from db.mongo import books_collection
+from books.book_repository import BookRepository
 
 sample_books = [
     {"title": "The Great Gatsby", "author": "F. Scott Fitzgerald", "year": 1925, "genre": "Fiction", "pages": 218},
@@ -21,10 +22,16 @@ async def add_sample_books():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.redis = await redis.Redis(host="redis", port=6379)
+    book_repo = BookRepository()
+    app.state.book_repo = book_repo
+    await book_repo.get_redis()
     await add_sample_books()
+    print("App startup completed")
+    
     yield
-    await app.state.redis.close()
+    
+    await book_repo.close_redis()
+    print("App shutting down")
 
 app = FastAPI(lifespan=lifespan)
 
