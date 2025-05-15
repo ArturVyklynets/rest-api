@@ -1,13 +1,11 @@
 import time
-import redis.asyncio as redis
 
+import redis.asyncio as redis
 from beanie import PydanticObjectId
 from fastapi import HTTPException, Request
 
 from db.mongo import books_collection
 from .models import Book
-
-
 
 
 class BookRepository:
@@ -21,7 +19,7 @@ class BookRepository:
 
     async def get_redis(self):
         if not self.redis_conn:
-            self.redis_conn = await redis.Redis(host="redis", port=6379, decode_responses=True)
+            self.redis_conn = redis.Redis(host="redis", port=6379, decode_responses=True)
         return self.redis_conn
 
     async def close_redis(self):
@@ -37,18 +35,19 @@ class BookRepository:
         key = f"rate_limit_{identity}"
         now = int(time.time())
         window_start = now - period
-        
+
         await redis_conn.zremrangebyscore(key, min=0, max=window_start)
         await redis_conn.zadd(key, {str(now): now})
         await redis_conn.expire(key, period)
-        
+
         request_count = await redis_conn.zcount(key, min=window_start, max=now)
-        
+
         if request_count > limit:
             raise HTTPException(
                 status_code=429,
                 detail="Too many requests."
             )
+
     @staticmethod
     async def get_books(limit: int = 10, cursor: int = 0):
         total = await books_collection.count_documents({})

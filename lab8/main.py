@@ -14,24 +14,26 @@ sample_books = [
     {"title": "Pride and Prejudice", "author": "Jane Austen", "genre": "Romance", "pages": 279, "year": 1813},
 ]
 
+
 async def add_sample_books():
     count = await books_collection.count_documents({})
     if count == 0:
         await books_collection.insert_many(sample_books)
         print("Sample books added to the database.")
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     book_repo = BookRepository()
-    app.state.book_repo = book_repo
     await book_repo.get_redis()
     await add_sample_books()
     print("App startup completed")
-    
+
     yield
-    
+
     await book_repo.close_redis()
     print("App shutting down")
+
 
 app = FastAPI(lifespan=lifespan)
 
