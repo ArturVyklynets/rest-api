@@ -1,0 +1,65 @@
+volumes:
+  mongo_data: {}
+  redis_data: {}
+
+services:
+  mongo_db:
+    image: mongo:latest
+    container_name: mongo_db_lab9
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  redis:
+    image: redis:latest
+    container_name: redis_lab9
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  fastapi_app:
+    build: .
+    container_name: fastapi_app_lab9
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo_db
+      - redis
+    environment:
+      MONGO_URI: ${MONGO_URI}
+      REDIS_HOST: redis
+    volumes:
+      - .:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  tests:
+    build: .
+    depends_on:
+      - redis
+      - fastapi_app
+    environment:
+      REDIS_HOST: redis
+      PYTHONPATH: /app
+    volumes:
+      - .:/app
+    working_dir: /app  
+    command: pytest tests
+
+  prism:
+    image: stoplight/prism:4
+    container_name: prism_mock_server
+    ports:
+      - "4010:4010"
+    volumes:
+      - ./openapi.json:/tmp/openapi.json
+    command: mock -h 0.0.0.0 /tmp/openapi.json  
