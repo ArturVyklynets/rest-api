@@ -1,0 +1,46 @@
+volumes:
+  mongo_data: {}
+
+services:
+  mongo_db:
+    image: mongo:latest
+    container_name: mongo_db_lab10
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  fastapi_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi_app_lab10
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo_db
+    environment:
+      MONGO_URI: ${MONGO_URI}
+    volumes:
+      - .:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  locust:
+    build:
+      context: ./locust
+      dockerfile: Dockerfile
+    container_name: locust_lab10
+    restart: "no"
+    ports:
+      - "8089:8089"
+    depends_on:
+      - fastapi_app
+    volumes:
+      - ./locust:/app
+    command: locust -f locustfile.py --host http://fastapi_app:8000
