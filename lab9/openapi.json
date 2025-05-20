@@ -26,6 +26,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TokenResponse"
+                },
+                "example": {
+                  "access_token": "abc123token",
+                  "refresh_token": "refresh456token",
+                  "token_type": "bearer"
                 }
               }
             }
@@ -64,6 +69,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TokenResponse"
+                },
+                "example": {
+                  "access_token": "newtoken789",
+                  "refresh_token": "newrefresh321",
+                  "token_type": "bearer"
                 }
               }
             }
@@ -136,48 +146,33 @@
                   "items": {
                     "$ref": "#/components/schemas/BookSchema"
                   }
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create Book",
-        "operationId": "create_book_books_post",
-        "security": [
-          {
-            "OAuth2PasswordBearer": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/BookSchema"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BookSchema"
-                }
+                },
+                "example": [
+                  {
+                    "id": "book1",
+                    "title": "The Hobbit",
+                    "author": "J.R.R. Tolkien",
+                    "genre": "Fantasy",
+                    "pages": 310,
+                    "year": 1937
+                  },
+                  {
+                    "id": "book2",
+                    "title": "1984",
+                    "author": "George Orwell",
+                    "genre": "Dystopian",
+                    "pages": 328,
+                    "year": 1949
+                  },
+                  {
+                    "id": "book3",
+                    "title": "To Kill a Mockingbird",
+                    "author": "Harper Lee",
+                    "genre": "Classic",
+                    "pages": 281,
+                    "year": 1960
+                  }
+                ]
               }
             }
           },
@@ -221,6 +216,14 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BookSchema"
+                },
+                "example": {
+                  "id": "book42",
+                  "title": "Fahrenheit 451",
+                  "author": "Ray Bradbury",
+                  "genre": "Dystopian",
+                  "pages": 194,
+                  "year": 1953
                 }
               }
             }
